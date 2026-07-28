@@ -1,7 +1,7 @@
 import { defineConfig } from '@prisma/config'
-import { resolve } from 'node:path'
+import { loadEnvIfPresent } from './lib/loadEnv'
 
-process.loadEnvFile?.(resolve('.env'))
+loadEnvIfPresent()
 
 export default defineConfig({
   schema: 'prisma/schema.prisma',
