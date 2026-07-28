@@ -14,7 +14,14 @@ export async function proxy(request: NextRequest) {
 
   if (!isProtected) return NextResponse.next()
 
-  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET })
+  // getToken() por defecto decide el nombre de la cookie de sesión
+  // (`__Secure-...` o no) según si NEXTAUTH_URL empieza con "https://" — si
+  // esa variable está mal puesta en el entorno de despliegue, busca la
+  // cookie equivocada y todo el mundo queda "sin sesión" en silencio. Usamos
+  // el protocolo real de la petición (que Next ya resuelve vía
+  // x-forwarded-proto) en vez de confiar en esa variable.
+  const secureCookie = request.nextUrl.protocol === 'https:'
+  const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET, secureCookie })
   if (!token) {
     if (pathname.startsWith('/api')) {
       return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
