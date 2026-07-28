@@ -5,12 +5,10 @@
  * No es una funcionalidad de la aplicación — se ejecuta manualmente y no queda
  * referenciado desde ningún endpoint ni pantalla.
  */
+import 'dotenv/config'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { PrismaClient, Prisma } from '@prisma/client'
 import * as XLSX from 'xlsx'
-import { loadEnvIfPresent } from '../lib/loadEnv'
-
-loadEnvIfPresent()
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! })
 const prisma = new PrismaClient({ adapter })
