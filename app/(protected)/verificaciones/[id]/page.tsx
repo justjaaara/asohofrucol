@@ -37,9 +37,9 @@ async function getData(id: number) {
   ])
 
   return {
-    item: serialize(item) as Record<string, unknown>,
-    parametricas: serialize(parametricas) as { id: number; tipo: string; valor: string; orden: number }[],
-    profesionales: serialize(profesionales) as unknown as { documento: string; nombre: string; correo: string | null; zona: string | null }[],
+    item: serialize(item),
+    parametricas: serialize(parametricas),
+    profesionales: serialize(profesionales),
   }
 }
 
@@ -58,8 +58,7 @@ export default async function EditarVerificacionPage({
   const data = await getData(idVerificacion)
   if (!data) notFound()
 
-  const item = data.item as { idProfesionalVerificacion: string | bigint }
-  if (!esAdmin(user.rol) && BigInt(item.idProfesionalVerificacion) !== user.documento) {
+  if (!esAdmin(user.rol) && BigInt(data.item.idProfesionalVerificacion) !== user.documento) {
     redirect('/verificaciones')
   }
 

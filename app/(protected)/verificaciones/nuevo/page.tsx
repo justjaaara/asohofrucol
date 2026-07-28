@@ -25,8 +25,8 @@ async function getData() {
   ])
 
   return {
-    parametricas: serialize(parametricas) as { id: number; tipo: string; valor: string; orden: number }[],
-    profesionales: serialize(profesionales) as unknown as { documento: string; nombre: string; correo: string | null; zona: string | null }[],
+    parametricas: serialize(parametricas),
+    profesionales: serialize(profesionales),
   }
 }
 

@@ -126,21 +126,8 @@ export default async function MaratonPage({ searchParams }: SearchParams) {
   const siNo = parametricas.filter((p) => p.tipo === 'SiNo')
   const recaudadores = parametricas.filter((p) => p.tipo === 'RecaudadorIdentificado')
 
-  type VigenciaItem = { anio: number; marcado: boolean }
-  type ProfesionalItem = { documento: string; nombre: string }
-  type MaratonItem = {
-    idMaraton: number
-    fechaMaraton: string | null
-    nit: string
-    razonSocial: string | null
-    culminado: string | null
-    profesionalRecaudador: ProfesionalItem | null
-    profesionalVerificacion: ProfesionalItem | null
-    vigencias: VigenciaItem[]
-  }
-
-  const records = serialize(data) as unknown as MaratonItem[]
-  const professionals = serialize(profesionales) as unknown as ProfesionalItem[]
+  const records = serialize(data)
+  const professionals = serialize(profesionales)
 
   return (
     <div className="space-y-6">

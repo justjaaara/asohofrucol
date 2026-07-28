@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
 import { esAdmin } from '@/lib/permisos'
 import { serialize } from '@/lib/serialize'
-import MaratonForm, { MaratonFormData } from '@/components/maraton/MaratonForm'
+import MaratonForm from '@/components/maraton/MaratonForm'
 import { PageHeader } from '@/components/ui/PageHeader'
 
 interface EditMaratonPageProps {
@@ -58,8 +58,8 @@ export default async function EditMaratonPage({ params }: EditMaratonPageProps) 
       <PageHeader title="Editar registro de maratón" />
       <MaratonForm
         id={idMaraton}
-        initialData={serialize(record) as unknown as MaratonFormData}
-        profesionales={serialize(profesionales) as unknown as { documento: string; nombre: string }[]}
+        initialData={serialize(record)}
+        profesionales={serialize(profesionales)}
         siNo={siNo}
         recaudadores={recaudadores}
       />

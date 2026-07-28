@@ -29,7 +29,7 @@ export default async function NuevoMaratonPage() {
     <div className="space-y-6">
       <PageHeader title="Nuevo registro de maratón" description="Registre un nuevo caso para la jornada de verificación" />
       <MaratonForm
-        profesionales={serialize(profesionales) as unknown as { documento: string; nombre: string }[]}
+        profesionales={serialize(profesionales)}
         siNo={siNo}
         recaudadores={recaudadores}
       />
