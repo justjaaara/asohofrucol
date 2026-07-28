@@ -13,14 +13,22 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
     setError('')
 
+    // Se leen los valores directo del formulario (no solo del estado de
+    // React) porque gestores de contraseñas como Bitwarden a veces rellenan
+    // los inputs manipulando el DOM sin disparar onChange, dejando el
+    // estado desincronizado de lo que se ve en pantalla.
+    const formData = new FormData(e.currentTarget)
+    const documentoValue = String(formData.get('documento') ?? documento)
+    const passwordValue = String(formData.get('password') ?? password)
+
     const result = await signIn('credentials', {
-      documento,
-      password,
+      documento: documentoValue,
+      password: passwordValue,
       redirect: false,
     })
 
@@ -70,8 +78,10 @@ export default function LoginPage() {
           <Field label="Documento" htmlFor="documento" required>
             <Input
               id="documento"
+              name="documento"
               type="text"
               inputMode="numeric"
+              autoComplete="username"
               value={documento}
               onChange={(e) => setDocumento(e.target.value)}
               required
@@ -82,7 +92,9 @@ export default function LoginPage() {
           <Field label="Contraseña" htmlFor="password" required>
             <Input
               id="password"
+              name="password"
               type="password"
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
