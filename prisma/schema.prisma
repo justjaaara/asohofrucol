@@ -1,0 +1,167 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Rol {
+  idRol       Int           @id @default(autoincrement())
+  nombre      String        @unique
+  profesional Profesional[]
+
+  @@map("Roles")
+}
+
+model Profesional {
+  documento BigInt  @id
+  nombre    String
+  correo    String?
+  zona      String?
+
+  idRol        Int
+  rol          Rol       @relation(fields: [idRol], references: [idRol], onUpdate: NoAction, onDelete: NoAction)
+  passwordHash String?
+  estado       Boolean   @default(true)
+
+  recaudos       Verificacion[] @relation("ProfesionalRecaudador")
+  verificaciones Verificacion[] @relation("ProfesionalVerificacion")
+  creados        Verificacion[] @relation("UsuarioCreacion")
+
+  maratonRecaudos   Maraton[] @relation("MaratonRecaudador")
+  maratonVerifica   Maraton[] @relation("MaratonVerificacion")
+  maratonCreados    Maraton[] @relation("MaratonUsuarioCreacion")
+
+  @@map("Profesionales")
+}
+
+model Parametrica {
+  id     Int     @id @default(autoincrement())
+  tipo   String
+  valor  String
+  orden  Int     @default(0)
+  activo Boolean @default(true)
+
+  @@unique([tipo, valor])
+  @@map("Parametricas")
+}
+
+model Verificacion {
+  idVerificacion Int @id @default(autoincrement())
+
+  idProfesionalRecaudador   BigInt
+  profesionalRecaudador     Profesional @relation("ProfesionalRecaudador", fields: [idProfesionalRecaudador], references: [documento], onUpdate: NoAction, onDelete: NoAction)
+  idProfesionalVerificacion BigInt
+  profesionalVerificacion   Profesional @relation("ProfesionalVerificacion", fields: [idProfesionalVerificacion], references: [documento], onUpdate: NoAction, onDelete: NoAction)
+
+  tipoInformacion String
+  zona            String?
+
+  fechaEntregaInformacion DateTime? @db.Date
+  fechaAsignacion         DateTime? @db.Date
+  recaudadorIdentificado  String?
+
+  nit         BigInt
+  razonSocial String?
+
+  informacionCompleta String?
+
+  fechaCulminacion        DateTime? @db.Date
+  fechaTrasladoRecaudador DateTime? @db.Date
+  fechaTrasladoAuditoria  DateTime? @db.Date
+
+  valorPendienteCapital   Decimal? @db.Decimal(18, 2)
+  valorPendienteIntereses Decimal? @db.Decimal(18, 2)
+  valorSaldoFavor         Decimal? @db.Decimal(18, 2)
+
+  estadoActual         String?
+  detalleCertificacion String?
+  usoPTNuevo           String?
+  porcentajeAvance     Decimal? @db.Decimal(5, 2)
+
+  observacionProfesional String?
+  biable                 String?
+  correo                 String?
+  digitacion             String?
+
+  motivoRequerimiento           String?
+  envioRequerimiento            String?
+  programacionGestionPresencial String?
+  verificacionContable          String?
+
+  etapa String
+
+  fechaCreacion   DateTime @default(now())
+  usuarioCreacion BigInt
+  creador         Profesional @relation("UsuarioCreacion", fields: [usuarioCreacion], references: [documento], onUpdate: NoAction, onDelete: NoAction)
+  fechaModificacion   DateTime?
+  usuarioModificacion BigInt?
+
+  vigencias VigenciaVerificacion[]
+
+  @@map("Verificaciones")
+}
+
+model VigenciaVerificacion {
+  idVigencia     Int         @id @default(autoincrement())
+  idVerificacion Int
+  verificacion   Verificacion @relation(fields: [idVerificacion], references: [idVerificacion], onDelete: Cascade)
+  anio           Int
+  marcado        Boolean     @default(false)
+
+  @@unique([idVerificacion, anio])
+  @@map("VigenciasVerificacion")
+}
+
+model Maraton {
+  idMaraton Int @id @default(autoincrement())
+
+  fechaMaraton DateTime? @db.Date
+
+  idProfesionalRecaudador BigInt?
+  profesionalRecaudador   Profesional? @relation("MaratonRecaudador", fields: [idProfesionalRecaudador], references: [documento], onUpdate: NoAction, onDelete: NoAction)
+  idProfesionalVerificacion BigInt?
+  profesionalVerificacion   Profesional? @relation("MaratonVerificacion", fields: [idProfesionalVerificacion], references: [documento], onUpdate: NoAction, onDelete: NoAction)
+
+  recaudadorIdentificado String?
+
+  nit             BigInt
+  razonSocial     String?
+  numeroVigencias Int?
+
+  porcentajeEstadoVerificacion Decimal? @db.Decimal(5, 2)
+
+  culminado        String?
+  porcentajeAvance Decimal? @db.Decimal(5, 2)
+  totalAvance      Decimal? @db.Decimal(5, 2)
+
+  valorPendienteCapital   Decimal? @db.Decimal(18, 2)
+  valorPendienteIntereses Decimal? @db.Decimal(18, 2)
+  valorSaldoFavor         Decimal? @db.Decimal(18, 2)
+
+  usoPTNuevo             String?
+  observacionCulminacion String?
+  observacionCoordinacion String?
+
+  fechaCreacion   DateTime @default(now())
+  usuarioCreacion BigInt
+  creador         Profesional @relation("MaratonUsuarioCreacion", fields: [usuarioCreacion], references: [documento], onUpdate: NoAction, onDelete: NoAction)
+  fechaModificacion   DateTime?
+  usuarioModificacion BigInt?
+
+  vigencias VigenciaMaraton[]
+
+  @@map("Maraton")
+}
+
+model VigenciaMaraton {
+  idVigenciaMaraton Int     @id @default(autoincrement())
+  idMaraton         Int
+  maraton           Maraton @relation(fields: [idMaraton], references: [idMaraton], onDelete: Cascade)
+  anio              Int
+  marcado           Boolean @default(false)
+
+  @@unique([idMaraton, anio])
+  @@map("VigenciasMaraton")
+}

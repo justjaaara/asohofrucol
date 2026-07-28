@@ -1,0 +1,5 @@
+export const th = 'px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-forest-50/80'
+export const td = 'px-4 py-3 align-middle'
+export const tr = 'border-b border-cream-100 last:border-0 even:bg-cream-50/60 hover:bg-gold-50 transition-colors'
+export const theadRow = 'bg-forest-900'
+export const tableWrap = 'overflow-x-auto rounded-xl border border-cream-200 bg-white shadow-[0_1px_2px_rgba(23,20,16,0.04),0_8px_24px_-16px_rgba(23,20,16,0.15)]'

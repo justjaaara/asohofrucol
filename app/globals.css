@@ -1,26 +1,122 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Forzar esquema claro: evita que el navegador aplique modo oscuro
+     automático e invierta colores de fondos/inputs sin control nuestro. */
+  color-scheme: light;
+
+  /* Verdes — dominante institucional (del recaudo/campo) */
+  --color-forest-950: #0b2e1f;
+  --color-forest-900: #0f3d28;
+  --color-forest-800: #154b32;
+  --color-forest-700: #1d6640;
+  --color-forest-600: #237d4d;
+  --color-forest-500: #2f9960;
+  --color-forest-100: #dbeee1;
+  --color-forest-50: #f0f7f2;
+
+  /* Oro — acento primario (llamados a la acción, foco) */
+  --color-gold-600: #b6890f;
+  --color-gold-500: #dda520;
+  --color-gold-400: #e8ba3f;
+  --color-gold-100: #faedc4;
+  --color-gold-50: #fdf6e3;
+
+  /* Terracota — acento semántico (pendiente / atención) */
+  --color-terracotta-600: #b8461f;
+  --color-terracotta-500: #d8602f;
+  --color-terracotta-100: #f9e0d2;
+  --color-terracotta-50: #fdf1e9;
+
+  /* Oliva — acento secundario (neutral informativo) */
+  --color-olive-600: #83801f;
+  --color-olive-500: #9d9a2c;
+  --color-olive-100: #eeedc9;
+
+  /* Rojo — reservado únicamente para acciones destructivas */
+  --color-danger-600: #b91c1c;
+  --color-danger-500: #dc2626;
+  --color-danger-100: #fee2e2;
+  --color-danger-50: #fef2f2;
+
+  /* Base cálida */
+  --color-cream-50: #fbf8f1;
+  --color-cream-100: #f5efe0;
+  --color-cream-200: #ece2c9;
+  --color-ink-950: #171410;
+  --color-ink-800: #2c2820;
+  --color-ink-600: #55503f;
+  --color-ink-400: #8a836c;
+
+  --background: var(--color-cream-50);
+  --foreground: var(--color-ink-950);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-forest-950: var(--color-forest-950);
+  --color-forest-900: var(--color-forest-900);
+  --color-forest-800: var(--color-forest-800);
+  --color-forest-700: var(--color-forest-700);
+  --color-forest-600: var(--color-forest-600);
+  --color-forest-500: var(--color-forest-500);
+  --color-forest-100: var(--color-forest-100);
+  --color-forest-50: var(--color-forest-50);
+
+  --color-gold-600: var(--color-gold-600);
+  --color-gold-500: var(--color-gold-500);
+  --color-gold-400: var(--color-gold-400);
+  --color-gold-100: var(--color-gold-100);
+  --color-gold-50: var(--color-gold-50);
+
+  --color-terracotta-600: var(--color-terracotta-600);
+  --color-terracotta-500: var(--color-terracotta-500);
+  --color-terracotta-100: var(--color-terracotta-100);
+  --color-terracotta-50: var(--color-terracotta-50);
+
+  --color-olive-600: var(--color-olive-600);
+  --color-olive-500: var(--color-olive-500);
+  --color-olive-100: var(--color-olive-100);
+
+  --color-danger-600: var(--color-danger-600);
+  --color-danger-500: var(--color-danger-500);
+  --color-danger-100: var(--color-danger-100);
+  --color-danger-50: var(--color-danger-50);
+
+  --color-cream-50: var(--color-cream-50);
+  --color-cream-100: var(--color-cream-100);
+  --color-cream-200: var(--color-cream-200);
+  --color-ink-950: var(--color-ink-950);
+  --color-ink-800: var(--color-ink-800);
+  --color-ink-600: var(--color-ink-600);
+  --color-ink-400: var(--color-ink-400);
+
+  --font-display: var(--font-fraunces);
+  --font-sans: var(--font-public-sans);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-feature-settings: "tnum" 1;
+}
+
+::selection {
+  background: var(--color-gold-400);
+  color: var(--color-ink-950);
+}
+
+* {
+  scrollbar-color: var(--color-forest-700) transparent;
+  scrollbar-width: thin;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
 }
