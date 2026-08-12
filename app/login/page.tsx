@@ -102,7 +102,7 @@ export default function LoginPage() {
           </Field>
 
           <Button type="submit" disabled={loading} className="w-full">
-            {loading ? 'Ingresando…' : 'Ingresar'}
+            {loading ? 'Iniciando sesión…' : 'Ingresar'}
           </Button>
         </form>
 
