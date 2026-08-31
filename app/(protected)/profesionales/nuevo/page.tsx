@@ -1,32 +1,23 @@
 import { redirect } from 'next/navigation'
-import { cookies, headers } from 'next/headers'
+import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
 import { esAdmin } from '@/lib/permisos'
 import { ProfesionalForm } from '@/components/profesionales/ProfesionalForm'
 import { PageHeader } from '@/components/ui/PageHeader'
 
-type Rol = {
-  idRol: number
-  nombre: string
-}
+export const dynamic = 'force-dynamic'
 
-async function fetchApi<T>(path: string): Promise<T | null> {
-  try {
-    const cookieStore = await cookies()
-    const headersList = await headers()
-    const host = headersList.get('host') ?? 'localhost:3000'
-    const protocol = host.includes('localhost') ? 'http' : 'https'
+async function getData() {
+  const [roles, zonas] = await Promise.all([
+    prisma.rol.findMany({ orderBy: { nombre: 'asc' } }),
+    prisma.parametrica.findMany({
+      where: { activo: true, tipo: 'Zona' },
+      orderBy: { orden: 'asc' },
+      select: { valor: true },
+    }),
+  ])
 
-    const res = await fetch(`${protocol}://${host}${path}`, {
-      headers: { Cookie: cookieStore.toString() },
-      cache: 'no-store',
-    })
-
-    if (!res.ok) return null
-    return (await res.json()) as T
-  } catch {
-    return null
-  }
+  return { roles, zonas }
 }
 
 export default async function NuevoProfesionalPage() {
@@ -35,15 +26,12 @@ export default async function NuevoProfesionalPage() {
     redirect('/profesionales')
   }
 
-  const [roles, zonas] = await Promise.all([
-    fetchApi<Rol[]>('/api/roles'),
-    fetchApi<{ valor: string }[]>('/api/parametricas?tipo=Zona'),
-  ])
+  const { roles, zonas } = await getData()
 
   return (
     <div className="space-y-6">
       <PageHeader title="Nuevo profesional" />
-      <ProfesionalForm roles={roles ?? []} zonas={zonas ?? []} isAdmin />
+      <ProfesionalForm roles={roles} zonas={zonas} isAdmin />
     </div>
   )
 }
