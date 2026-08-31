@@ -7,7 +7,6 @@ import { jsonResponse, errorResponse, unauthorized, forbidden, notFound } from '
 
 const includeRelations = {
   vigencias: { orderBy: { anio: 'asc' as const } },
-  profesionalRecaudador: { select: { documento: true, nombre: true } },
   profesionalVerificacion: { select: { documento: true, nombre: true } },
 }
 
@@ -107,7 +106,6 @@ export async function PUT(request: NextRequest, { params }: RouteContext) {
   try {
     const scalarData = {
       fechaMaraton: toDate(body.fechaMaraton),
-      idProfesionalRecaudador: toBigInt(body.idProfesionalRecaudador),
       idProfesionalVerificacion: toBigInt(body.idProfesionalVerificacion),
       recaudadorIdentificado: body.recaudadorIdentificado || null,
       nit: BigInt(String(body.nit)),

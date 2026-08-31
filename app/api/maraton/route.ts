@@ -7,7 +7,6 @@ import { jsonResponse, errorResponse, unauthorized, forbidden } from '@/lib/api'
 
 const includeRelations = {
   vigencias: { orderBy: { anio: 'asc' as const } },
-  profesionalRecaudador: { select: { documento: true, nombre: true } },
   profesionalVerificacion: { select: { documento: true, nombre: true } },
 }
 
@@ -80,15 +79,6 @@ function buildWhere(searchParams: URLSearchParams) {
   const recaudadorIdentificado = searchParams.get('recaudadorIdentificado')
   if (recaudadorIdentificado) where.recaudadorIdentificado = recaudadorIdentificado
 
-  const recaudador = searchParams.get('idProfesionalRecaudador')
-  if (recaudador) {
-    try {
-      where.idProfesionalRecaudador = BigInt(recaudador)
-    } catch {
-      // ignorar
-    }
-  }
-
   const verificador = searchParams.get('idProfesionalVerificacion')
   if (verificador) {
     try {
@@ -153,7 +143,6 @@ export async function POST(request: NextRequest) {
   try {
     const data = {
       fechaMaraton: toDate(body.fechaMaraton),
-      idProfesionalRecaudador: toBigInt(body.idProfesionalRecaudador),
       idProfesionalVerificacion: toBigInt(body.idProfesionalVerificacion),
       recaudadorIdentificado: body.recaudadorIdentificado || null,
       nit: BigInt(String(body.nit)),
