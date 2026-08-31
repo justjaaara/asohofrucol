@@ -29,7 +29,6 @@ model Profesional {
   verificaciones Verificacion[] @relation("ProfesionalVerificacion")
   creados        Verificacion[] @relation("UsuarioCreacion")
 
-  maratonRecaudos   Maraton[] @relation("MaratonRecaudador")
   maratonVerifica   Maraton[] @relation("MaratonVerificacion")
   maratonCreados    Maraton[] @relation("MaratonUsuarioCreacion")
 
@@ -119,8 +118,6 @@ model Maraton {
 
   fechaMaraton DateTime? @db.Date
 
-  idProfesionalRecaudador BigInt?
-  profesionalRecaudador   Profesional? @relation("MaratonRecaudador", fields: [idProfesionalRecaudador], references: [documento], onUpdate: NoAction, onDelete: NoAction)
   idProfesionalVerificacion BigInt?
   profesionalVerificacion   Profesional? @relation("MaratonVerificacion", fields: [idProfesionalVerificacion], references: [documento], onUpdate: NoAction, onDelete: NoAction)
 

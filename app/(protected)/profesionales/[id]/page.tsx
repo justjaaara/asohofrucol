@@ -1,42 +1,42 @@
 import { redirect } from 'next/navigation'
-import { cookies, headers } from 'next/headers'
+import { prisma } from '@/lib/prisma'
 import { getCurrentUser } from '@/lib/session'
 import { esAdmin } from '@/lib/permisos'
+import { serialize } from '@/lib/serialize'
 import { ProfesionalForm } from '@/components/profesionales/ProfesionalForm'
 import { PageHeader } from '@/components/ui/PageHeader'
 
-type Rol = {
-  idRol: number
-  nombre: string
-}
+export const dynamic = 'force-dynamic'
 
-type Profesional = {
-  documento: string
-  nombre: string
-  correo?: string | null
-  zona?: string | null
-  estado: boolean
-  idRol: number
-  rol: Rol
-}
+const profesionalSelect = {
+  documento: true,
+  nombre: true,
+  correo: true,
+  zona: true,
+  idRol: true,
+  estado: true,
+  rol: true,
+} as const
 
-async function fetchApi<T>(path: string): Promise<T | null> {
+async function getData(id: string) {
+  let documento: bigint
   try {
-    const cookieStore = await cookies()
-    const headersList = await headers()
-    const host = headersList.get('host') ?? 'localhost:3000'
-    const protocol = host.includes('localhost') ? 'http' : 'https'
-
-    const res = await fetch(`${protocol}://${host}${path}`, {
-      headers: { Cookie: cookieStore.toString() },
-      cache: 'no-store',
-    })
-
-    if (!res.ok) return null
-    return (await res.json()) as T
+    documento = BigInt(id)
   } catch {
-    return null
+    return { profesional: null, roles: [], zonas: [] }
   }
+
+  const [profesional, roles, zonas] = await Promise.all([
+    prisma.profesional.findUnique({ where: { documento }, select: profesionalSelect }),
+    prisma.rol.findMany({ orderBy: { nombre: 'asc' } }),
+    prisma.parametrica.findMany({
+      where: { activo: true, tipo: 'Zona' },
+      orderBy: { orden: 'asc' },
+      select: { valor: true },
+    }),
+  ])
+
+  return { profesional, roles, zonas }
 }
 
 export default async function EditarProfesionalPage({
@@ -53,20 +53,16 @@ export default async function EditarProfesionalPage({
     redirect('/profesionales')
   }
 
-  const [profesional, roles, zonas] = await Promise.all([
-    fetchApi<Profesional>(`/api/profesionales/${id}`),
-    fetchApi<Rol[]>('/api/roles'),
-    fetchApi<{ valor: string }[]>('/api/parametricas?tipo=Zona'),
-  ])
+  const { profesional, roles, zonas } = await getData(id)
 
-  if (!profesional || !roles) {
+  if (!profesional) {
     redirect('/profesionales')
   }
 
   return (
     <div className="space-y-6">
       <PageHeader title="Editar profesional" />
-      <ProfesionalForm profesional={profesional} roles={roles} zonas={zonas ?? []} isAdmin={admin} />
+      <ProfesionalForm profesional={serialize(profesional)} roles={roles} zonas={zonas} isAdmin={admin} />
     </div>
   )
 }

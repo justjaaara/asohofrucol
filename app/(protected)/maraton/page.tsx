@@ -60,15 +60,6 @@ function buildWhere(
   const recaudadorIdentificado = getFirst(params.recaudadorIdentificado)
   if (recaudadorIdentificado) where.recaudadorIdentificado = recaudadorIdentificado
 
-  const recaudador = getFirst(params.idProfesionalRecaudador)
-  if (recaudador) {
-    try {
-      where.idProfesionalRecaudador = BigInt(recaudador)
-    } catch {
-      // ignore
-    }
-  }
-
   const verificador = getFirst(params.idProfesionalVerificacion)
   if (verificador) {
     try {
@@ -103,7 +94,6 @@ export default async function MaratonPage({ searchParams }: SearchParams) {
       where: whereWithRol,
       include: {
         vigencias: { orderBy: { anio: 'asc' } },
-        profesionalRecaudador: { select: { documento: true, nombre: true } },
         profesionalVerificacion: { select: { documento: true, nombre: true } },
       },
       orderBy: { idMaraton: 'desc' },
@@ -147,7 +137,7 @@ export default async function MaratonPage({ searchParams }: SearchParams) {
             <Input id="q" type="text" name="q" defaultValue={getFirst(params.q) ?? ''} placeholder="NIT o razón social" />
           </Field>
 
-          <Field label="Verificador" htmlFor="idProfesionalVerificacion">
+          <Field label="Profesional a Cargo de la Verificación" htmlFor="idProfesionalVerificacion">
             <Select
               id="idProfesionalVerificacion"
               name="idProfesionalVerificacion"
@@ -226,8 +216,7 @@ export default async function MaratonPage({ searchParams }: SearchParams) {
               <th className={th}>Fecha</th>
               <th className={th}>NIT</th>
               <th className={th}>Razón social</th>
-              <th className={th}>Recaudador</th>
-              <th className={th}>Verificador</th>
+              <th className={th}>Profesional a Cargo de la Verificación</th>
               <th className={th}>Culminado</th>
               <th className={th}>Vigencias</th>
               <th className={th}>Acciones</th>
@@ -244,7 +233,6 @@ export default async function MaratonPage({ searchParams }: SearchParams) {
                 </td>
                 <td className={`${td} tabular-nums font-medium`}>{item.nit}</td>
                 <td className={td}>{item.razonSocial || '-'}</td>
-                <td className={td}>{item.profesionalRecaudador?.nombre ?? '-'}</td>
                 <td className={td}>{item.profesionalVerificacion?.nombre ?? '-'}</td>
                 <td className={td}>
                   {item.culminado ? <Badge tone={siNoBadgeTone(item.culminado)}>{item.culminado}</Badge> : '-'}

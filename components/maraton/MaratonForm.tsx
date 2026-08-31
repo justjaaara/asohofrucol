@@ -27,7 +27,6 @@ interface Vigencia {
 export interface MaratonFormData {
   idMaraton?: number
   fechaMaraton?: string | null
-  idProfesionalRecaudador?: string | null
   idProfesionalVerificacion?: string | null
   recaudadorIdentificado?: string | null
   nit?: string
@@ -73,7 +72,6 @@ export default function MaratonForm({
 
   const [form, setForm] = useState({
     fechaMaraton: formatDate(initialData?.fechaMaraton),
-    idProfesionalRecaudador: initialData?.idProfesionalRecaudador?.toString() ?? '',
     idProfesionalVerificacion: initialData?.idProfesionalVerificacion?.toString() ?? '',
     recaudadorIdentificado: initialData?.recaudadorIdentificado ?? '',
     nit: initialData?.nit?.toString() ?? '',
@@ -132,7 +130,6 @@ export default function MaratonForm({
 
     const payload = {
       ...form,
-      idProfesionalRecaudador: form.idProfesionalRecaudador || null,
       idProfesionalVerificacion: form.idProfesionalVerificacion || null,
       recaudadorIdentificado: form.recaudadorIdentificado || null,
       razonSocial: form.razonSocial.trim() || null,
@@ -182,23 +179,12 @@ export default function MaratonForm({
       <form onSubmit={handleSubmit} className="space-y-8">
         {error && <p className="rounded-md bg-danger-50 px-3 py-2 text-sm text-danger-600">{error}</p>}
 
-        <FormSection title="Identificación del caso" description="Fecha de jornada, responsables y recaudador">
+        <FormSection title="Identificación del caso" description="Fecha de jornada y profesional a cargo">
           <Field label="Fecha maratón" htmlFor="fechaMaraton">
             <Input id="fechaMaraton" type="date" name="fechaMaraton" value={form.fechaMaraton} onChange={handleChange} />
           </Field>
 
-          <Field label="Recaudador" htmlFor="idProfesionalRecaudador">
-            <Select id="idProfesionalRecaudador" name="idProfesionalRecaudador" value={form.idProfesionalRecaudador} onChange={handleChange}>
-              <option value="">Seleccione...</option>
-              {profesionales.map((p) => (
-                <option key={p.documento} value={p.documento}>
-                  {p.nombre}
-                </option>
-              ))}
-            </Select>
-          </Field>
-
-          <Field label="Verificador" htmlFor="idProfesionalVerificacion">
+          <Field label="Profesional a Cargo de la Verificación" htmlFor="idProfesionalVerificacion">
             <Select id="idProfesionalVerificacion" name="idProfesionalVerificacion" value={form.idProfesionalVerificacion} onChange={handleChange}>
               <option value="">Seleccione...</option>
               {profesionales.map((p) => (
