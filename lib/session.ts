@@ -19,7 +19,12 @@ export async function getCurrentUser() {
 }
 
 export async function getCurrentUserFromRequest(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
+  // Mismo problema que en proxy.ts: sin secureCookie explícito, getToken()
+  // decide el nombre de la cookie según NEXTAUTH_URL, y si esa variable no
+  // coincide con el protocolo real, no encuentra la cookie y devuelve null
+  // en silencio. Usamos el protocolo real de la petición.
+  const secureCookie = req.nextUrl.protocol === 'https:'
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET, secureCookie })
   if (!token?.documento) return null
   return {
     documento: BigInt(token.documento as string),
